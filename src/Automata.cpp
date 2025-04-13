@@ -91,7 +91,8 @@ void Automata::check() {
         if (cash >= prices[currentDrinkIndex]) {
             cout << "Your drink " << menu[currentDrinkIndex]
                 << " Price: " << prices[currentDrinkIndex]
-                << " Balance of money: " << cash - prices[currentDrinkIndex] << "\n";
+                << " Balance of money: " 
+                << cash - prices[currentDrinkIndex] << "\n";
         } else {
             cout << "Insufficient funds.\n";
         }
