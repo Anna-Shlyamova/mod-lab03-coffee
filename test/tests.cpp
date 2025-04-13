@@ -28,11 +28,8 @@ TEST(AutomataTest, CannotTurnOffDuringOperation) {
     testing::internal::CaptureStdout();
     automata.off();
     std::string output = testing::internal::GetCapturedStdout();
-    EXPECT_NE(output.find("Automata can't be turn on during the work"), std::string::npos);
-    testing::internal::CaptureStdout();
-    automata.getState();
-    std::string output = testing::internal::GetCapturedStdout();
-    EXPECT_NE(output.find("OFF"), std::string::npos);
+    EXPECT_NE(output.find("Automata can't be turn on during the work"),
+        std::string::npos);
 }
 
 TEST(AutomataTest, CannotTurnOffDuringOperation2) {
