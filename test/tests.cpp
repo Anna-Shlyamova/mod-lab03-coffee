@@ -32,7 +32,7 @@ TEST(AutomataTest, CannotTurnOffDuringOperation) {
         std::string::npos);
 }
 
-TEST(AutomataTest, CannotTurnOffDuringOperation2) {
+TEST(AutomataTest, CannotTurnOffDuringOperationState) {
     Automata automata;
     automata.on();
     automata.coin(50);
@@ -63,7 +63,7 @@ TEST(AutomataTest, AddMoreCoinsInAccept) {
     EXPECT_NE(output.find("Total sum: 30"), std::string::npos);
 }
 
-TEST(AutomataTest, AddMoreCoinsInAccept2) {
+TEST(AutomataTest, AddMoreCoinsInAcceptState) {
     Automata automata;
     automata.on();
     automata.coin(20);
@@ -105,7 +105,7 @@ TEST(AutomataTest, CancelOrderReturnsToWait) {
     EXPECT_NE(output.find("Order cancelled, refund: 30"), std::string::npos);
 }
 
-TEST(AutomataTest, CancelOrderReturnsToWait2) {
+TEST(AutomataTest, CancelOrderReturnsToWaitState) {
     Automata automata;
     automata.on();
     automata.coin(30);
@@ -142,7 +142,7 @@ TEST(AutomataTest, FinishResetsStateAndCash) {
     EXPECT_NE(output.find("Change: 10"), std::string::npos);
 }
 
-TEST(AutomataTest, FinishResetsStateAndCash2) {
+TEST(AutomataTest, FinishResetsStateAndCashState) {
     Automata automata;
     automata.on();
     automata.coin(50);
