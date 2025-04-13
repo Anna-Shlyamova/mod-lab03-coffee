@@ -40,7 +40,7 @@ TEST(AutomataTest, CannotTurnOffDuringOperation2) {
     testing::internal::CaptureStdout();
     automata.getState();
     std::string output = testing::internal::GetCapturedStdout();
-    EXPECT_NE(output.find("OFF"), std::string::npos);
+    EXPECT_NE(output.find("ACCEPT"), std::string::npos);
 }
 
 TEST(AutomataTest, InsertCoinInWait) {
@@ -164,7 +164,7 @@ TEST(AutomataTest, CannotCookIfNotCheck) {
     testing::internal::CaptureStdout();
     automata.getState();
     std::string output = testing::internal::GetCapturedStdout();
-    EXPECT_NE(output.find("COOK"), std::string::npos);
+    EXPECT_NE(output.find("ACCEPT"), std::string::npos);
 }
 
 TEST(AutomataTest, CannotFinishIfNotCook) {
@@ -175,7 +175,7 @@ TEST(AutomataTest, CannotFinishIfNotCook) {
     testing::internal::CaptureStdout();
     automata.getState();
     std::string output = testing::internal::GetCapturedStdout();
-    EXPECT_NE(output.find("WAIT"), std::string::npos);
+    EXPECT_NE(output.find("ACCEPT"), std::string::npos);
 }
 
 TEST(AutomataTest, TurnOffFromWait) {
