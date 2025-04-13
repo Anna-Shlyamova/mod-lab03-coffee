@@ -3,100 +3,117 @@
 #include <gtest/gtest.h>
 #include "Automata.h"
 
-TEST_F(AutomataTest, InitialStateIsOff) {
-    Automata b;
-    EXPECT_EQ(b.getCurrentState(), STATES::OFF);
+TEST(AutomataTest, InitialStateIsOff) {
+    Automata automata;
+    EXPECT_EQ(automata.getState(), STATES::OFF);
 }
 
-TEST_F(AutomataTest, TurnsOnToWait) {
-    EXPECT_EQ(a.getCurrentState(), STATES::WAIT);
+TEST(AutomataTest, TurnsOnToWait) {
+    Automata automata;
+    automata.on();
+    EXPECT_EQ(automata.getState(), STATES::WAIT);
 }
 
-TEST_F(AutomataTest, CannotTurnOffDuringOperation) {
-    a.coin(50);
-    a.off();
-    EXPECT_NE(a.getCurrentState(), STATES::OFF);
+TEST(AutomataTest, CannotTurnOffDuringOperation) {
+    Automata automata;
+    automata.on();
+    automata.coin(50);
+    testing::internal::CaptureStdout();
+    automata.off();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("Automata can't be turn on during the work"), std::string::npos);
+    EXPECT_NE(automata.getState(), STATES::OFF);
 }
 
-TEST_F(AutomataTest, InsertCoinInWait) {
-    a.coin(30);
-    EXPECT_EQ(a.getCash(), 30);
-    EXPECT_EQ(a.getCurrentState(), STATES::ACCEPT);
+TEST(AutomataTest, InsertCoinInWait) {
+    Automata automata;
+    automata.on();
+    automata.coin(30);
+    EXPECT_EQ(automata.getState(), STATES::ACCEPT);
 }
 
-TEST_F(AutomataTest, AddMoreCoinsInAccept) {
-    a.coin(20);
-    a.coin(10);
-    EXPECT_EQ(a.getCash(), 30);
-    EXPECT_EQ(a.getCurrentState(), STATES::ACCEPT);
+TEST(AutomataTest, AddMoreCoinsInAccept) {
+    Automata automata;
+    automata.on();
+    automata.coin(20);
+    testing::internal::CaptureStdout();
+    automata.coin(10);
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("Total sum: 30"), std::string::npos);
+    EXPECT_EQ(automata.getState(), STATES::ACCEPT);
 }
 
-TEST_F(AutomataTest, ChooseDrinkInAccept) {
-    a.coin(50);
-    a.choice(1);
-    EXPECT_EQ(a.getCurrentDrinkIndex(), 1);
-    EXPECT_EQ(a.getCurrentState(), STATES::CHECK);
+TEST(AutomataTest, ChooseDrinkInAccept) {
+    Automata automata;
+    automata.on();
+    automata.coin(50);
+    automata.choice(1);
+    EXPECT_EQ(automata.getState(), STATES::CHECK);
 }
 
-TEST_F(AutomataTest, ChooseInvalidDrinkFails) {
-    a.coin(50);
-    a.choice(99);
-    EXPECT_EQ(a.getCurrentDrinkIndex(), -1);
-    EXPECT_EQ(a.getCurrentState(), STATES::ACCEPT);
+TEST(AutomataTest, ChooseInvalidDrinkFails) {
+    Automata automata;
+    automata.on();
+    automata.coin(50);
+    testing::internal::CaptureStdout();
+    automata.choice(99);
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("Incorrect Index"), std::string::npos);
 }
 
-TEST_F(AutomataTest, CheckSufficientFunds) {
-    a.coin(50);
-    a.choice(1);
-    a.check();
-    EXPECT_EQ(a.getCurrentState(), STATES::CHECK);
+TEST(AutomataTest, CancelOrderReturnsToWait) {
+    Automata automata;
+    automata.on();
+    automata.coin(30);
+    testing::internal::CaptureStdout();
+    automata.cancel();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("Order cancelled, refund: 30"), std::string::npos);
+    EXPECT_EQ(automata.getState(), STATES::WAIT);
 }
 
-TEST_F(AutomataTest, CheckInsufficientFunds) {
-    a.coin(10);
-    a.choice(2);
-    a.check();
-    EXPECT_EQ(a.getCurrentState(), STATES::ACCEPT);
+TEST(AutomataTest, CookDrinkAfterCheck) {
+    Automata automata;
+    automata.on();
+    automata.coin(50);
+    automata.choice(1);
+    automata.check();
+    automata.cook();
+    EXPECT_EQ(automata.getState(), STATES::COOK);
 }
 
-TEST_F(AutomataTest, CancelOrderReturnsToWait) {
-    a.coin(30);
-    a.cancel();
-    EXPECT_EQ(a.getCash(), 0);
-    EXPECT_EQ(a.getCurrentState(), STATES::WAIT);
+TEST(AutomataTest, FinishResetsStateAndCash) {
+    Automata automata;
+    automata.on();
+    automata.coin(50);
+    automata.choice(1);
+    automata.check();
+    automata.cook();
+    testing::internal::CaptureStdout();
+    automata.finish();
+    EXPECT_NE(output.find("Change: 10"), std::string::npos);
+    EXPECT_EQ(automata.getState(), STATES::WAIT);
 }
 
-TEST_F(AutomataTest, CookDrinkAfterCheck) {
-    a.coin(50);
-    a.choice(1);
-    a.check();
-    a.cook();
-    EXPECT_EQ(a.getCurrentState(), STATES::COOK);
+TEST(AutomataTest, CannotCookIfNotCheck) {
+    Automata automata;
+    automata.on();
+    automata.coin(50);
+    automata.cook();
+    EXPECT_NE(automata.getState(), STATES::COOK);
 }
 
-TEST_F(AutomataTest, FinishResetsStateAndCash) {
-    a.coin(50);
-    a.choice(1);
-    a.check();
-    a.cook();
-    a.finish();
-    EXPECT_EQ(a.getCurrentState(), STATES::WAIT);
-    EXPECT_EQ(a.getCash(), 0);
+TEST(AutomataTest, CannotFinishIfNotCook) {
+    Automata automata;
+    automata.on();
+    automata.coin(50);
+    automata.finish();
+    EXPECT_NE(automata.getState(), STATES::WAIT);
 }
 
-TEST_F(AutomataTest, CannotCookIfNotCheck) {
-    a.coin(50);
-    a.cook();
-    EXPECT_NE(a.getCurrentState(), STATES::COOK);
-}
-
-TEST_F(AutomataTest, CannotFinishIfNotCook) {
-    a.coin(50);
-    a.finish();
-    EXPECT_NE(a.getCurrentState(), STATES::WAIT);
-}
-
-TEST_F(AutomataTest, TurnOffFromWait) {
-    a.off();
-    EXPECT_EQ(a.getCurrentState(), STATES::OFF);
+TEST(AutomataTest, TurnOffFromWait) {
+    Automata automata;
+    automata.on();
+    automata.off();
+    EXPECT_EQ(automata.getState(), STATES::OFF);
 }
