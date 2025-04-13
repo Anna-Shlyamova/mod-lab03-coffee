@@ -1,13 +1,16 @@
-#include <iostream>
+//"Copyright 2025 Owner"
+
 #include "Automata.h"
 #include "States.h"
+#include <iostream>
 #include <string>
 #include <vector>
 
-using namespace std;
+using std::cout;
+using std::endl;
 
 Automata::Automata() : cash(0), state(STATES::OFF), currentDrinkIndex(-1) {
-    menu = { "Чай", "Кофе", "Латте", "Капучино"};
+    menu = { "Чай", "Кофе", "Латте", "Капучино" };
     prices = { 30, 40, 50, 35 };
 }
 
@@ -48,29 +51,29 @@ void Automata::getMenu() const {
 
 void Automata::getState() const {
     switch (state) {
-        case STATES::OFF:
-            cout << "OFF\n";
-            break;
-        case STATES::WAIT:
-            cout << "WAIT\n";
-            break;
-        case STATES::ACCEPT:
-            cout << "ACCEPT\n";
-            break;
-        case STATES::CHECK:
-            cout << "CHECK\n";
-            break;
-        case STATES::COOK:
-            cout << "COOK\n";
-            break;
-        }
+    case STATES::OFF:
+        cout << "OFF\n";
+        break;
+    case STATES::WAIT:
+        cout << "WAIT\n";
+        break;
+    case STATES::ACCEPT:
+        cout << "ACCEPT\n";
+        break;
+    case STATES::CHECK:
+        cout << "CHECK\n";
+        break;
+    case STATES::COOK:
+        cout << "COOK\n";
+        break;
+    }
 }
 
 void Automata::coin(int amount) {
     if (state == STATES::WAIT || state == STATES::ACCEPT) {
         state = STATES::ACCEPT;
         cash += amount;
-        cout << "Общая сумма: " << cash <<"\n";
+        cout << "Общая сумма: " << cash << "\n";
     }
     else {
         cout << "Прием денег недоступен.\n";
@@ -82,7 +85,7 @@ void Automata::choice(int itemIndex) {
         state = STATES::CHECK;
         currentDrinkIndex = itemIndex;
     }
-    else if(state == STATES::ACCEPT){
+    else if (state == STATES::ACCEPT) {
         cout << "Некорректный индекс.\n";
     }
     else {
@@ -93,7 +96,9 @@ void Automata::choice(int itemIndex) {
 void Automata::check() {
     if (state == STATES::CHECK) {
         if (cash >= prices[currentDrinkIndex]) {
-            cout << "Ваш напиток" << menu[currentDrinkIndex] << "стоимость: " << prices[currentDrinkIndex] << " остаток: " << cash - prices[currentDrinkIndex] << "\n";
+            cout << "Ваш напиток " << menu[currentDrinkIndex]
+                << " стоимость: " << prices[currentDrinkIndex]
+                << " остаток: " << cash - prices[currentDrinkIndex] << "\n";
         }
         else {
             cout << "Недостаточно средств.\n";
@@ -129,7 +134,7 @@ void Automata::cancel() {
 void Automata::finish() {
     if (state == STATES::COOK) {
         state = STATES::WAIT;
-        cout << "Напиток готов.\n" ;
+        cout << "Напиток готов.\n";
         if (cash > prices[currentDrinkIndex]) {
             cout << "Сдача: " << cash - prices[currentDrinkIndex] << "\n";
         }
