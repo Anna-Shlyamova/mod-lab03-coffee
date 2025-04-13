@@ -35,6 +35,17 @@ TEST(AutomataTest, CannotTurnOffDuringOperation) {
     EXPECT_NE(output.find("OFF"), std::string::npos);
 }
 
+TEST(AutomataTest, CannotTurnOffDuringOperation2) {
+    Automata automata;
+    automata.on();
+    automata.coin(50);
+    automata.off();
+    testing::internal::CaptureStdout();
+    automata.getState();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("OFF"), std::string::npos);
+}
+
 TEST(AutomataTest, InsertCoinInWait) {
     Automata automata;
     automata.on();
@@ -53,6 +64,13 @@ TEST(AutomataTest, AddMoreCoinsInAccept) {
     automata.coin(10);
     std::string output = testing::internal::GetCapturedStdout();
     EXPECT_NE(output.find("Total sum: 30"), std::string::npos);
+}
+
+TEST(AutomataTest, AddMoreCoinsInAccept2) {
+    Automata automata;
+    automata.on();
+    automata.coin(20);
+    automata.coin(10);
     testing::internal::CaptureStdout();
     automata.getState();
     std::string output = testing::internal::GetCapturedStdout();
@@ -88,6 +106,13 @@ TEST(AutomataTest, CancelOrderReturnsToWait) {
     automata.cancel();
     std::string output = testing::internal::GetCapturedStdout();
     EXPECT_NE(output.find("Order cancelled, refund: 30"), std::string::npos);
+}
+
+TEST(AutomataTest, CancelOrderReturnsToWait2) {
+    Automata automata;
+    automata.on();
+    automata.coin(30);
+    automata.cancel();
     testing::internal::CaptureStdout();
     automata.getState();
     std::string output = testing::internal::GetCapturedStdout();
@@ -116,7 +141,18 @@ TEST(AutomataTest, FinishResetsStateAndCash) {
     automata.cook();
     testing::internal::CaptureStdout();
     automata.finish();
+    std::string output = testing::internal::GetCapturedStdout();
     EXPECT_NE(output.find("Change: 10"), std::string::npos);
+}
+
+TEST(AutomataTest, FinishResetsStateAndCash2) {
+    Automata automata;
+    automata.on();
+    automata.coin(50);
+    automata.choice(1);
+    automata.check();
+    automata.cook();
+    automata.finish();
     testing::internal::CaptureStdout();
     automata.getState();
     std::string output = testing::internal::GetCapturedStdout();
