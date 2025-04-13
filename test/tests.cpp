@@ -1,17 +1,24 @@
 // Copyright 2022 GHA Test Team
 
-#include <gtest/gtest.h>
 #include "Automata.h"
+#include <gtest/gtest.h>
+#include <string>
 
 TEST(AutomataTest, InitialStateIsOff) {
     Automata automata;
-    EXPECT_EQ(automata.getState(), STATES::OFF);
+    testing::internal::CaptureStdout();
+    automata.getState();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("OFF"), std::string::npos);
 }
 
 TEST(AutomataTest, TurnsOnToWait) {
     Automata automata;
     automata.on();
-    EXPECT_EQ(automata.getState(), STATES::WAIT);
+    testing::internal::CaptureStdout();
+    automata.getState();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("WAIT"), std::string::npos);
 }
 
 TEST(AutomataTest, CannotTurnOffDuringOperation) {
@@ -22,14 +29,20 @@ TEST(AutomataTest, CannotTurnOffDuringOperation) {
     automata.off();
     std::string output = testing::internal::GetCapturedStdout();
     EXPECT_NE(output.find("Automata can't be turn on during the work"), std::string::npos);
-    EXPECT_NE(automata.getState(), STATES::OFF);
+    testing::internal::CaptureStdout();
+    automata.getState();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("OFF"), std::string::npos);
 }
 
 TEST(AutomataTest, InsertCoinInWait) {
     Automata automata;
     automata.on();
     automata.coin(30);
-    EXPECT_EQ(automata.getState(), STATES::ACCEPT);
+    testing::internal::CaptureStdout();
+    automata.getState();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("ACCEPT"), std::string::npos);
 }
 
 TEST(AutomataTest, AddMoreCoinsInAccept) {
@@ -40,7 +53,10 @@ TEST(AutomataTest, AddMoreCoinsInAccept) {
     automata.coin(10);
     std::string output = testing::internal::GetCapturedStdout();
     EXPECT_NE(output.find("Total sum: 30"), std::string::npos);
-    EXPECT_EQ(automata.getState(), STATES::ACCEPT);
+    testing::internal::CaptureStdout();
+    automata.getState();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("ACCEPT"), std::string::npos);
 }
 
 TEST(AutomataTest, ChooseDrinkInAccept) {
@@ -48,7 +64,10 @@ TEST(AutomataTest, ChooseDrinkInAccept) {
     automata.on();
     automata.coin(50);
     automata.choice(1);
-    EXPECT_EQ(automata.getState(), STATES::CHECK);
+    testing::internal::CaptureStdout();
+    automata.getState();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("CHECK"), std::string::npos);
 }
 
 TEST(AutomataTest, ChooseInvalidDrinkFails) {
@@ -69,7 +88,10 @@ TEST(AutomataTest, CancelOrderReturnsToWait) {
     automata.cancel();
     std::string output = testing::internal::GetCapturedStdout();
     EXPECT_NE(output.find("Order cancelled, refund: 30"), std::string::npos);
-    EXPECT_EQ(automata.getState(), STATES::WAIT);
+    testing::internal::CaptureStdout();
+    automata.getState();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("WAIT"), std::string::npos);
 }
 
 TEST(AutomataTest, CookDrinkAfterCheck) {
@@ -79,7 +101,10 @@ TEST(AutomataTest, CookDrinkAfterCheck) {
     automata.choice(1);
     automata.check();
     automata.cook();
-    EXPECT_EQ(automata.getState(), STATES::COOK);
+    testing::internal::CaptureStdout();
+    automata.getState();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("COOK"), std::string::npos);
 }
 
 TEST(AutomataTest, FinishResetsStateAndCash) {
@@ -92,7 +117,10 @@ TEST(AutomataTest, FinishResetsStateAndCash) {
     testing::internal::CaptureStdout();
     automata.finish();
     EXPECT_NE(output.find("Change: 10"), std::string::npos);
-    EXPECT_EQ(automata.getState(), STATES::WAIT);
+    testing::internal::CaptureStdout();
+    automata.getState();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("WAIT"), std::string::npos);
 }
 
 TEST(AutomataTest, CannotCookIfNotCheck) {
@@ -100,7 +128,10 @@ TEST(AutomataTest, CannotCookIfNotCheck) {
     automata.on();
     automata.coin(50);
     automata.cook();
-    EXPECT_NE(automata.getState(), STATES::COOK);
+    testing::internal::CaptureStdout();
+    automata.getState();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("COOK"), std::string::npos);
 }
 
 TEST(AutomataTest, CannotFinishIfNotCook) {
@@ -108,12 +139,18 @@ TEST(AutomataTest, CannotFinishIfNotCook) {
     automata.on();
     automata.coin(50);
     automata.finish();
-    EXPECT_NE(automata.getState(), STATES::WAIT);
+    testing::internal::CaptureStdout();
+    automata.getState();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("WAIT"), std::string::npos);
 }
 
 TEST(AutomataTest, TurnOffFromWait) {
     Automata automata;
     automata.on();
     automata.off();
-    EXPECT_EQ(automata.getState(), STATES::OFF);
+    testing::internal::CaptureStdout();
+    automata.getState();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("OFF"), std::string::npos);
 }
