@@ -10,4 +10,4 @@ enum class STATES {
     COOK
 };
 
-#endif
+#endif  // INCLUDE_STATES_H_

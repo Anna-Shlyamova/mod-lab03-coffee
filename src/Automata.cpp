@@ -10,31 +10,28 @@ using std::cout;
 using std::endl;
 
 Automata::Automata() : cash(0), state(STATES::OFF), currentDrinkIndex(-1) {
-    menu = { "Чай", "Кофе", "Латте", "Капучино" };
+    menu = { "Tea", "Coffee", "Latte", "Cappuchino" };
     prices = { 30, 40, 50, 35 };
 }
 
 void Automata::on() {
     if (state == STATES::OFF) {
         state = STATES::WAIT;
-        cout << "Автомат включен.\n";
-    }
-    else {
+        cout << "Automata on wait.\n";
+    } else {
         state = STATES::WAIT;
-        cout << "Автомат уже включен.\n";
+        cout << "Automata has been already on wait.\n";
     }
 }
 
 void Automata::off() {
     if (state == STATES::WAIT) {
         state = STATES::OFF;
-        cout << "Автомат выключен.\n";
-    }
-    else if (state == STATES::OFF) {
-        cout << "Автомат уже выключен.\n";
-    }
-    else {
-        cout << "Автомат нельзя выключить во время работы.\n";
+        cout << "Automata off.\n";
+    } else if (state == STATES::OFF) {
+        cout << "Automata has been already off.\n";
+    } else {
+        cout << "Automata can't be turn on during the work.\n";
     }
 }
 
@@ -43,9 +40,8 @@ void Automata::getMenu() const {
         for (int i = 0; i < menu.size(); i++) {
             cout << menu[i] << ": " << prices[i] << "\n";
         }
-    }
-    else {
-        cout << "Автомат выключен.\n";
+    } else {
+        cout << "Automata off.\n";
     }
 }
 
@@ -73,10 +69,9 @@ void Automata::coin(int amount) {
     if (state == STATES::WAIT || state == STATES::ACCEPT) {
         state = STATES::ACCEPT;
         cash += amount;
-        cout << "Общая сумма: " << cash << "\n";
-    }
-    else {
-        cout << "Прием денег недоступен.\n";
+        cout << "Total sum: " << cash << "\n";
+    } else {
+        cout << "Cash acceptance is not available.\n";
     }
 }
 
@@ -84,64 +79,57 @@ void Automata::choice(int itemIndex) {
     if (state == STATES::ACCEPT && itemIndex >= 0 && itemIndex < menu.size()) {
         state = STATES::CHECK;
         currentDrinkIndex = itemIndex;
-    }
-    else if (state == STATES::ACCEPT) {
-        cout << "Некорректный индекс.\n";
-    }
-    else {
-        cout << "Автомат должен находиться в состоянии ACCEPT.\n";
+    } else if (state == STATES::ACCEPT) {
+        cout << "Incorrect Index\n";
+    } else {
+        cout << "The automata must be in the ACCEPT state.\n";
     }
 }
 
 void Automata::check() {
     if (state == STATES::CHECK) {
         if (cash >= prices[currentDrinkIndex]) {
-            cout << "Ваш напиток " << menu[currentDrinkIndex]
-                << " стоимость: " << prices[currentDrinkIndex]
-                << " остаток: " << cash - prices[currentDrinkIndex] << "\n";
+            cout << "Your drink " << menu[currentDrinkIndex]
+                << " Price: " << prices[currentDrinkIndex]
+                << " Balance of money: " << cash - prices[currentDrinkIndex] << "\n";
+        } else {
+            cout << "Insufficient funds.\n";
         }
-        else {
-            cout << "Недостаточно средств.\n";
-        }
-    }
-    else {
-        cout << "Автомат должен находиться в состоянии CHECK.\n";
+    } else {
+        cout << "The automata must be in the CHECK state.\n";
     }
 }
 
 void Automata::cook() {
     if (state == STATES::CHECK) {
         state = STATES::COOK;
-        cout << "Приготовление напитка: " << menu[currentDrinkIndex] << "\n";
-    }
-    else {
-        cout << "Автомат должен находиться в состоянии CHECK.\n";
+        cout << "Cooking the drink: " << menu[currentDrinkIndex] << "\n";
+    } else {
+        cout << "The automata must be in the CHECK state.\n";
     }
 }
 
 void Automata::cancel() {
     if (state == STATES::CHECK || state == STATES::ACCEPT) {
         state = STATES::WAIT;
-        cout << "Заказ отменён, возврат: " << cash << "\n";
+        cout << "Order cancelled, refund: " << cash << "\n";
         cash = 0;
         currentDrinkIndex = -1;
-    }
-    else {
-        cout << "Автомат должен находиться в состоянии CHECK или ACCEPT.\n";
+    } else {
+        cout << "The automata must be in the CHECK or ACCEPT state.\n";
     }
 }
 
 void Automata::finish() {
     if (state == STATES::COOK) {
         state = STATES::WAIT;
-        cout << "Напиток готов.\n";
+        cout << "Your drink is ready.\n";
         if (cash > prices[currentDrinkIndex]) {
-            cout << "Сдача: " << cash - prices[currentDrinkIndex] << "\n";
+            cout << "Change: " << cash - prices[currentDrinkIndex] << "\n";
         }
         cash = 0;
         currentDrinkIndex = -1;
-    }
-    else {
-        cout << "Автомат должен находиться в состоянии COOK.\n";
+    } else {
+        cout << "The automata must be in the COOK state.\n";
     }
 }
